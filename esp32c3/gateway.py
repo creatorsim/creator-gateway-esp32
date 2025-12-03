@@ -213,12 +213,6 @@ def do_flash_request(request):
 
         # flashing steps...
         if error == 0:
-            error = check_uart_connection(target_device)
-        if error != 0:
-            req_data["status"] += "No UART port found.\n"
-            logging.error("No UART port found.")
-            raise Exception("No UART port found")
-        if error == 0:
             error = do_cmd(req_data, ["idf.py", "fullclean"])
         # Disable memory protection
         sdkconfig_path = os.path.join(BUILD_PATH, "sdkconfig")
@@ -315,7 +309,6 @@ def do_monitor_request(request):
 
         build_root = BUILD_PATH + "/build"
         error = 0
-        error = check_uart_connection(target_device)
         if error != 0:
             logging.info("No UART found")
             req_data["status"] += "No UART port found\n"
@@ -336,71 +329,7 @@ def do_monitor_request(request):
 # (4) Debug
 
 
-# (4.1) Physical connections check
-def check_uart_connection(board):
-    """Checks UART devices"""
-    if board.startswith("/dev/ttyUSB"):
-        devices = glob.glob("/dev/ttyUSB*")
-        logging.debug(f"Found devices: {devices}")
-        if "/dev/ttyUSB0" in devices:
-            logging.info("Found UART.")
-            return 0
-        elif devices:
-            logging.error("Other UART devices found (Is the name OK?).")
-            return 0
-        else:
-            logging.error("NO UART port found.")
-            return 1
-    elif board.startswith("rfc2217"):
-        try:
-            ser = serial.serial_for_url(board, timeout=1)
-            ser.close()
-            logging.info("Found RFC2217 UART.")
-            return 0
-        except serial.SerialException as e:
-            logging.error(f"NO RFC2217 UART port found: {e}")
-            return 1
-        # MAC
-    elif board.startswith("/dev/cu.usb"):
-        devices = glob.glob("/dev/cu.usb*")
-        logging.debug(f"Found devices: {devices}")
-        if board in devices:
-            logging.info("Found UART.")
-            return 0
-        elif devices:
-            logging.error("Other UART devices found (Is the name OK?).")
-            return 0
-        else:
-            logging.error("NO UART port found.")
-            return 1
-
-
-def check_jtag_connection():
-    """Checks JTAG devices"""
-    command = ["lsusb"]
-    try:
-        lsof = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, errs = lsof.communicate(timeout=5)
-        if output:
-            output_text = output.decode(errors="ignore")
-            if "JTAG" in output_text:
-                logging.info("JTAG found")
-                return True
-            else:
-                logging.warning("JTAG missing")
-                return False
-    except subprocess.TimeoutExpired:
-        lsof.kill()
-        output, errs = lsof.communicate()
-    except Exception as e:
-        logging.error(f"Error checking JTAG: {e}")
-        return None
-    return False
-
-
 # --- (4.2) Debug processes monitoring functions ---
-
-
 def check_gdb_connection():
     """Checks gdb status"""
     command = ["lsof", "-i", ":3333"]
@@ -522,6 +451,7 @@ def start_openocd_thread(req_data):
 def start_gdbgui(req_data):
     target_device = req_data["target_port"]
     route = os.path.join(BUILD_PATH, "gdbinit")
+    req_data["status"] = ""
     logging.debug(f"GDB route: {route}")
     route = os.path.join(BUILD_PATH, "gdbinit")
     if os.path.exists(route) and os.path.exists("./gbdscript.gdb"):
@@ -529,10 +459,6 @@ def start_gdbgui(req_data):
     else:
         logging.error(f"GDB route: {route} does not exist.")
         req_data["status"] += f"GDB route: {route} does not exist.\n"
-        return jsonify(req_data)
-    req_data["status"] = ""
-    if check_uart_connection(target_device) != 0:
-        req_data["status"] += f"No UART found\n"
         return jsonify(req_data)
 
     logging.info("Starting GDBGUI...")
@@ -588,15 +514,6 @@ def do_debug_request(request):
                 logging.debug("Killing OpenOCD")
                 kill_all_processes("openocd")
                 process_holder.pop("openocd", None)
-            # Check UART
-            if check_uart_connection(target_device) != 0:
-                req_data["status"] += f"No UART found\n"
-                return jsonify(req_data)
-            # Check if JTAG is connected
-            if not check_jtag_connection():
-                req_data["status"] += "No JTAG found\n"
-                return jsonify(req_data)
-
             # Start OpenOCD
             logging.info("Starting OpenOCD...")
             openocd_thread = start_openocd_thread(req_data)
