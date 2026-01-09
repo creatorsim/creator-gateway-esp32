@@ -49,6 +49,7 @@ def do_fullclean_request(request):
     # flashing steps...
     if error == 0:
       do_cmd_output(req_data, ['idf.py','-C', BUILD_PATH,'fullclean'])  
+      do_cmd_output(req_data, ['rm','-rf', BUILD_PATH + '/build']) 
     if error == 0:
        req_data['status'] += 'Full clean done.\n'    
   except Exception as e:
