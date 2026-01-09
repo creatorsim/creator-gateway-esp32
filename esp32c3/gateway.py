@@ -22,6 +22,7 @@
 
 
 import glob
+import shutil
 import sys
 import threading
 from time import sleep, time
@@ -290,7 +291,12 @@ def do_monitor_request(request):
     error = 0
     if os.path.isdir(build_root) and os.listdir(build_root):
       logging.info("Build found")
-      do_cmd(req_data, ['idf.py', '-p', target_device, 'monitor'])
+      if os.path.isfile(BUILD_PATH +'/sdkconfig') == True:
+        do_cmd(req_data, ['idf.py', '-p', target_device, 'monitor'])
+      else:
+        req_data['status'] += "No sdkconfig file found. Please, build the project first.\n"
+        logging.error("No sdkconfig found.")
+        return jsonify(req_data)      
     else:
       req_data['status'] += "No ELF file found in build directory.\n"
       logging.error("No elf found.")
