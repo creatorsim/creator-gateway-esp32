@@ -417,6 +417,65 @@ def start_openocd_thread(req_data):
         req_data['status'] += f"Error starting OpenOCD: {str(e)}\n"
         logging.error(f"Error starting OpenOCD: {str(e)}")
         return None
+#  Fix routes with spaces
+def has_spaces_in_paths(gdbinit_path):
+    with open(gdbinit_path, 'r') as f:
+        for line in f:
+            stripped = line.strip()
+            if stripped.startswith('source'):
+                logging.info(f"Checking line: {stripped}")
+                parts = stripped.split(None, 1)
+                if len(parts) == 2:
+                    path = parts[1]
+                    if ' ' in path:
+                        logging.info(f"Path with spaces found: {path}")
+                        return True
+    logging.info(f"No spaces found in paths.")
+    return False
+
+def fix_gdbinit_paths_inplace(gdbinit_path):
+    fixed_lines = []
+    created_links = {}
+
+    gdb_cmds_to_fix = ['directory', 'source', 'add-symbol-file', 'file']
+
+    def create_symlink_for_path(path):
+        clean_path = path.strip('"')
+        dir_path = os.path.dirname(clean_path)
+
+        if dir_path in created_links:
+            return path.replace(dir_path, created_links[dir_path])
+
+        home_dir = os.path.expanduser("~")
+        base_name = os.path.basename(dir_path)
+        link_name = base_name.replace(' ', '_') + '_link'
+        link_path = os.path.join(home_dir, link_name)
+
+        if not os.path.exists(link_path):
+            print(f"Creando symlink: {link_path} -> {dir_path}")
+            os.symlink(dir_path, link_path)
+
+        created_links[dir_path] = link_path
+        new_path = path.replace(dir_path, link_path)
+        return new_path
+
+    with open(gdbinit_path, 'r') as f:
+        for line in f:
+            stripped = line.strip()
+            for cmd in gdb_cmds_to_fix:
+                if stripped.startswith(cmd):
+                    parts = stripped.split(None, 1)
+                    if len(parts) == 2:
+                        cmd_name, path = parts
+                        new_path = create_symlink_for_path(path)
+                        if not (new_path.startswith('"') and new_path.endswith('"')):
+                            new_path = f'"{new_path}"'
+                        line = f"{cmd_name} {new_path}\n"
+                    break
+            fixed_lines.append(line)
+
+    with open(gdbinit_path, 'w') as f:
+        f.writelines(fixed_lines)
 
 # (4.4) GDBGUI function    
 def start_gdbgui(req_data):
@@ -431,7 +490,14 @@ def start_gdbgui(req_data):
         req_data['status'] += f"GDB route: {route} does not exist.\n"
         return jsonify(req_data)
     req_data['status'] = ''
-    
+    # Fix route if needed
+    real_gdbinit_path = os.path.join(BUILD_PATH, 'build', 'gdbinit','gdbinit')
+    logging.debug(f"GDBINIT route: {real_gdbinit_path}")
+    if has_spaces_in_paths(real_gdbinit_path):
+        # fix_gdbinit_paths_inplace(real_gdbinit_path)
+        req_data['status'] += f"Route with spaces will break GDBGUI.Please use a directory without spaces\n"
+        logging.error(f"Route with spaces will break GDBGUI.Please use a directory without spaces\n")
+        return jsonify(req_data)
     logging.info("Starting GDBGUI...")
     gdbgui_cmd = ['idf.py', '-C', BUILD_PATH, 'gdbgui', '--gdbinit', route, 'monitor']
     sleep(5)
