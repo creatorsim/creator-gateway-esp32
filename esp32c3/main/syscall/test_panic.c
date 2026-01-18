@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *  Panic handler wrapper in order to simulate ecalls in CREATOR using Espressif family
- *  Author: Elisa Utrilla Arroyo
+ *  Author: CREATOR team
  *  
  */
 
@@ -246,6 +246,7 @@ IRAM_ATTR void __wrap_esp_panic_handler(panic_info_t *info)
             }
             default:
                 esp_rom_printf("Not an ecall registered\n");
+                frm->mepc += 4;
                 break;
         }
 
