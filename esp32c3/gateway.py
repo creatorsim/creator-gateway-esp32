@@ -196,21 +196,6 @@ def do_get_form(request):
     except Exception as e:
         return str(e)
 
-
-# **Arduino mode checkbox handling**
-def do_arduino_mode(request):
-    req_data = request.get_json()
-
-    statusChecker = req_data.get("state", "")
-    logging.debug(f"Checkbox value received: {statusChecker} of type {type(statusChecker)}") 
-
-    global arduino
-    arduino = bool(statusChecker)
-
-    logging.debug(f"Estado checkbox: {arduino} de tipo {type(statusChecker)}")
-    return req_data
-
-
 def check_build():
     global BUILD_PATH
     try:
@@ -250,8 +235,9 @@ def creator_build(file_in, file_out, target_board):
 
             # Detectar 'jal ra, digitalWrite'
             if len(data) >= 3 and data[0] == "jal" and data[1].replace(",", "") == "ra" and data[2] == "digitalWrite":
+                logging.info("Detected digitalWrite call with a0=%s, a1=%s", regs.get("a0"), regs.get("a1"))
                 print("DEBUG:", regs)
-                if target_board == "esp32c6" and regs.get("a0") == 8:
+                if target_board == "esp32c6" or target_board == "esp32h2" and regs.get("a0") == 8:
                     if regs.get("a1") == 1:
                         fout.write("    li a1, 50\n")
                         fout.write("    li a2, 50\n")
@@ -967,11 +953,13 @@ def get_form():
 @app.route("/flash", methods=["POST"])
 @cross_origin()
 def post_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")  
     try:
         shutil.rmtree("build")
     except Exception as e:
         pass
-
     return do_flash_request(request)
 
 
@@ -1020,13 +1008,6 @@ def post_fullclean_flash():
 @cross_origin()
 def post_erase_flash():
     return do_eraseflash_request(request)
-
-
-# (7) POST /arduinoMode-> cancel
-@app.route("/arduinoMode", methods=["POST"])
-@cross_origin()
-def post_arduino_mode():
-    return do_arduino_mode(request)
 
 
 # signal.signal(signal.SIGINT, handle_exit)
