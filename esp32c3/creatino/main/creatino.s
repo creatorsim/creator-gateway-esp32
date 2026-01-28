@@ -1499,34 +1499,4 @@ cr_serial_write:
     jal ra,serial_write 
     lw ra, 0(sp)     # Recupera el valor de ra
     addi sp, sp, 4
-    jr ra 
-
-.globl cr_rgbLedWrite
-.extern rgbLedWrite
-
-cr_rgbLedWrite:
-    addi sp, sp, -32       # Reservar stack (alineado)
-    
-    sw ra, 28(sp)          # Guardar return address
-    sw t0, 0(sp)
-    sw t1, 4(sp)
-    sw t2, 8(sp)
-    sw t3, 12(sp)
-    sw t4, 16(sp)
-    sw t5, 20(sp)
-    sw t6, 24(sp)
-
-    # a0, a1, a2 ya contienen los argumentos
-    jal rgbLedWrite
-
-    lw t0, 0(sp)
-    lw t1, 4(sp)
-    lw t2, 8(sp)
-    lw t3, 12(sp)
-    lw t4, 16(sp)
-    lw t5, 20(sp)
-    lw t6, 24(sp)
-    lw ra, 28(sp)
-
-    addi sp, sp, 32
-    ret
+    jr ra              

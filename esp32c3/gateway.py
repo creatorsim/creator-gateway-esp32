@@ -113,7 +113,6 @@ creatino_functions = [
     "pulseIn",
     "pulseInLong",
     "pulseOut",
-    "rgbLedWrite"
 ]
 
 process_holder = {}
@@ -224,45 +223,22 @@ def check_build():
         return -1
 
 
-def creator_build(file_in, file_out, target_board):
+def creator_build(file_in, file_out):
     try:
         # open input + output files
         fin = open(file_in, "rt")
         fout = open(file_out, "wt")
-        regs = {}
 
         # write header
         fout.write(".text\n")
         fout.write(".type main, @function\n")
         fout.write(".globl main\n")
 
+        data = []
         # for each line in the input file...
         for line in fin:
             line = add_space_after_comma(line)
             data = line.strip().split()
-
-            # RGB change
-            if len(data) > 0 and data[0] == "li":
-                if len(data) >= 3:
-                    _, reg, val = data
-                    reg = reg.replace(",", "")
-                    regs[reg] = int(val, 0)
-
-            # Detectar 'jal ra, digitalWrite'
-            if len(data) >= 3 and data[0] == "jal" and data[1].replace(",", "") == "ra" and data[2] == "digitalWrite":
-                print("DEBUG:", regs)
-                if target_board == "esp32c6" and regs.get("a0") == 8:
-                    if regs.get("a1") == 1:
-                        fout.write("    li a1, 50\n")
-                        fout.write("    li a2, 50\n")
-                        fout.write("    li a3, 50\n")
-                    else:
-                        fout.write("    li a1, 0\n")
-                        fout.write("    li a2, 0\n")
-                        fout.write("    li a3, 0\n")    
-                    fout.write("    jal ra, cr_rgbLedWrite\n")
-                    continue  # Salto para no escribir la línea original
-
             # Creatino replace functions
             if len(data) >= 3 and data[0] == "jal":
                 ra_token = data[1].replace(",", "").strip()
@@ -301,9 +277,8 @@ def creator_build(file_in, file_out, target_board):
         logging.error("Error: cr_ functions are not supported in this mode.")
         return 2
     except Exception as e:
-        logging.error("Error adapting assembly file: %s", str(e))
+        logging.error("Error adapting assembly file: ", str(e))
         return -1
-
 
 def do_cmd(req_data, cmd_array):
     try:
@@ -370,7 +345,7 @@ def do_flash_request(request):
         # transform th temporal assembly file
         filename = BUILD_PATH + "/main/program.s"
         logging.debug("filename to transform in do_flash_request: ", filename)
-        error = creator_build("tmp_assembly.s", filename, target_board)
+        error = creator_build("tmp_assembly.s", filename)
         if error == 2:
             logging.info("cr_ functions are not supported in this mode.")
             raise Exception("cr_ functions are not supported in this mode.")
@@ -530,7 +505,7 @@ def do_job_request(request):
         # transform th temporal assembly file
         filename = BUILD_PATH + "/main/program.s"
         print("filename to transform in do_job_request: ", filename)
-        error = creator_build("tmp_assembly.s", filename, target_board)
+        error = creator_build("tmp_assembly.s", filename)
         if error != 0:
             raise Exception("Error adapting assembly file...")
 
