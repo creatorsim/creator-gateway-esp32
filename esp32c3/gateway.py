@@ -37,6 +37,7 @@ import glob
 BUILD_PATH = "./creator"  
 ACTUAL_TARGET = ""
 arduino = False
+interrupts = False
 
 creatino_functions = [
     "initArduino",
@@ -215,6 +216,8 @@ def check_build():
     try:
         if arduino:
             BUILD_PATH = "./creatino"
+        if interrupts:
+            BUILD_PATH = "./interrupt"    
         else:
             BUILD_PATH = "./creator"
         return 0
@@ -233,6 +236,15 @@ def creator_build(file_in, file_out):
         fout.write(".text\n")
         fout.write(".type main, @function\n")
         fout.write(".globl main\n")
+
+        # Interrupt adaptations
+        if interrupts:
+            fout.write(".equ INTERRUPT_BASE, 0x600c2000\n")
+            fout.write(".equ GPIO_BASE, 0x60004000\n")
+            fout.write(".equ SYSTIMER_BASE, 0x60023000\n")
+            fout.write(".extern gpio_input\n")
+            fout.write(".extern gpio_output\n")
+            fout.write(".extern gpio_read\n")
 
         data = []
         # for each line in the input file...
@@ -351,7 +363,7 @@ def do_flash_request(request):
             raise Exception("cr_ functions are not supported in this mode.")
         elif error != 0:
             raise Exception
-
+        
         if error == 0 and BUILD_PATH == "./creator":
             error = do_cmd(req_data, ["idf.py", "-C", BUILD_PATH, "fullclean"])
         # if error == 0 and BUILD_PATH == './creatino' and ACTUAL_TARGET != target_board:
