@@ -1,16 +1,16 @@
 CFLAGS ?= -W -Wall -Wextra -Werror -Wundef -Wshadow
 CFLAGS += -Wdouble-promotion -fno-common -Wconversion
-CFLAGS += -march=rv32imc -mabi=ilp32
+CFLAGS += -march=rv32imc_zicsr -mabi=ilp32 -mcmodel=medany
 CFLAGS += -Os -ffunction-sections -fdata-sections -I.
-LDFLAGS ?= -Tlink.ld -nostdlib -nostartfiles -Wl,--gc-sections $(EXTRA_LINKFLAGS)
+LDFLAGS ?= -Lmain  -Tlink.ld -nostdlib -nostartfiles -Wl,--gc-sections $(EXTRA_LINKFLAGS)
 CWD ?= $(realpath $(CURDIR))
-DOCKER ?= docker run -it --rm -v $(CWD):$(CWD) -w $(CWD) mdashnet/riscv
-C ?= $(DOCKER) riscv-none-elf-gcc
-SOURCES = startup.c hal.c main.s
+C = $(shell which riscv32-esp-elf-gcc || find /opt/esp/tools -name "riscv32-esp-elf-gcc" | head -n 1)
+SOURCES = main/startup.c main/hal.c main/program.s
 
 build: firmware.bin
 
-firmware.elf: $(SOURCES) hal.h link.ld Makefile
+firmware.elf: $(SOURCES) main/hal.h main/link.ld Makefile
+	@echo "Directorio actual: $(CWD)"
 	$(C) $(CFLAGS) $(CFLAGS_EXTRA) $(SOURCES) $(LDFLAGS) -o $@
 
 firmware.bin: firmware.elf

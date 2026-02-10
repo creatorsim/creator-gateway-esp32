@@ -143,6 +143,10 @@ def do_fullclean_request(request):
         global BUILD_PATH
         BUILD_PATH = "./creator"
         error = check_build()
+        if BUILD_PATH == "./interrupt":
+            error = do_cmd_output(
+                req_data, ["make","-C", BUILD_PATH, "clean"]
+            )
         # flashing steps...
         if error == 0:
             do_cmd_output(req_data, ["idf.py", "-C", BUILD_PATH, "fullclean"])
@@ -180,7 +184,10 @@ def do_stop_monitor_request(request):
         req_data = request.get_json()
         req_data["status"] = ""
         logging.debug("Killing Monitor")
-        error = kill_all_processes("idf.py")
+        if BUILD_PATH == "./interrupt":
+            error = kill_all_processes('esputil')
+        else:    
+            error = kill_all_processes("idf.py")
         if error == 0:
             req_data["status"] += "Process stopped\n"
 
@@ -216,7 +223,7 @@ def check_build():
     try:
         if arduino:
             BUILD_PATH = "./creatino"
-        if interrupts:
+        elif interrupts:
             BUILD_PATH = "./interrupt"    
         else:
             BUILD_PATH = "./creator"
@@ -231,6 +238,7 @@ def creator_build(file_in, file_out):
         # open input + output files
         fin = open(file_in, "rt")
         fout = open(file_out, "wt")
+        regs = {}
 
         # write header
         fout.write(".text\n")
@@ -245,6 +253,7 @@ def creator_build(file_in, file_out):
             fout.write(".extern gpio_input\n")
             fout.write(".extern gpio_output\n")
             fout.write(".extern gpio_read\n")
+            
 
         data = []
         # for each line in the input file...
@@ -262,6 +271,11 @@ def creator_build(file_in, file_out):
                 if any(token.startswith("cr_") for token in data):
                     if BUILD_PATH == "./creator":
                         raise CrFunctionNotAllowed()
+
+                if interrupts and len(data) >= 3 and data[0] == "jal" and data[1].replace(",", "") == "ra" and data[2] == "printf":
+                    fout.write("call printf\n")
+                    continue
+    
                 if data[0] == "rdcycle":
                     fout.write("#### rdcycle" + data[1] + "####\n")
                     fout.write("addi sp, sp, -8\n")
@@ -289,7 +303,7 @@ def creator_build(file_in, file_out):
         logging.error("Error: cr_ functions are not supported in this mode.")
         return 2
     except Exception as e:
-        logging.error("Error adapting assembly file: ", str(e))
+        logging.error(f"Error adapting assembly file: {e}") # Correcto
         return -1
 
 def do_cmd(req_data, cmd_array):
@@ -363,6 +377,22 @@ def do_flash_request(request):
             raise Exception("cr_ functions are not supported in this mode.")
         elif error != 0:
             raise Exception
+        
+        #Interrupt mode adaptations
+        if BUILD_PATH == "./interrupt":
+            error = do_cmd_output(
+                req_data, ["make","-C", BUILD_PATH, "build"]
+            )
+            if error == 0:
+                error = do_cmd_output(
+                req_data, ["make","-C", BUILD_PATH, "flash"]
+            )
+
+            if error == 0:
+                req_data["status"] += "Flash completed successfully.\n"
+
+            return jsonify(req_data)
+
         
         if error == 0 and BUILD_PATH == "./creator":
             error = do_cmd(req_data, ["idf.py", "-C", BUILD_PATH, "fullclean"])
@@ -468,6 +498,16 @@ def do_monitor_request(request):
         target_device = req_data["target_port"]
         req_data["status"] = ""
         check_build()
+
+        if BUILD_PATH == "./interrupt":
+            error = do_cmd(
+                req_data, ["make","-C", BUILD_PATH, "monitor"]
+            )
+            logging.info(f"Building interrupt project, error code: {error}")
+            if error == 0:
+                req_data["status"] += "Flash completed successfully.\n"
+
+            return jsonify(req_data)
         
         #Docker check
         if running_in_docker() and openocd_alive('host.docker.internal', 4444):
@@ -954,6 +994,12 @@ def get_form():
 @app.route("/flash", methods=["POST"])
 @cross_origin()
 def post_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.info(f"Arduino mode: {arduino}")
+    global interrupts
+    interrupts = bool(request.get_json().get("interrupt", False))
+    logging.info(f"Interrupts mode: {interrupts}")  
     try:
         shutil.rmtree("build")
     except Exception as e:

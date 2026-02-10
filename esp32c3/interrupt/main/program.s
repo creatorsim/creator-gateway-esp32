@@ -1,3 +1,12 @@
+.text
+.type main, @function
+.globl main
+.equ INTERRUPT_BASE, 0x600c2000
+.equ GPIO_BASE, 0x60004000
+.equ SYSTIMER_BASE, 0x60023000
+.extern gpio_input
+.extern gpio_output
+.extern gpio_read
     ### MAIN PROGRAM ###
 .data
 fmt_button:
@@ -12,20 +21,8 @@ allocated:
 allocated_msg:
     .string  "Allocated CPU IRQ %d, prio %u\n"    
 
-.section .text
+.text
 
-    .equ BUTTON_PIN, 9
-    .equ LED_PIN, 2
-    .equ INTERRUPT_BASE, 0x600c2000
-    .equ GPIO_BASE, 0x60004000
-
-    .global main
-
-    .extern gpio_input
-    .extern gpio_output
-    .extern uart_init
-    .extern gpio_set_irq_handler
-    .extern gpio_read
 
 #---Interrupts
 gpio_clear_interrupt:
@@ -49,7 +46,7 @@ cpu_alloc_interrupt:
     sw s2, 8(sp)
 
     #Save argument
-    mv s0,a0 #PRIORITY (1-15)
+    mv s0, a0 #PRIORITY (1-15)
 
     la t0, allocated     # t0 = &allocated
     lw t1, 0(t0)         # t1 = allocated
@@ -86,11 +83,11 @@ loop_bits:
     sw s0, 0(t5)
 
     # #(3) Print if it's allocated
-    # la a0,allocated_msg
-    # mv a1,t3
+    # la a0, allocated_msg
+    # mv a1, t3
     # mv a2, s0
 
-    # call printf
+    # jal ra,  printf
 
     mv a0, t3            # devolver número asignado
     j done
@@ -119,7 +116,7 @@ gpio_set_irq_handler:
 
     # (1)Allocate interrupt in CPU with priority 1
     li a0, 1          # prioridad
-    call cpu_alloc_interrupt
+    jal ra,  cpu_alloc_interrupt
     mv s3, a0         # guardar IRQ asignado en s3 (no)
 
     # (2)Save pin interrupt
@@ -157,8 +154,8 @@ button_handler:
     addi sp, sp, -4         
     sw ra, 0(sp)            
 
-    li a0, BUTTON_PIN
-    call gpio_read          
+    li a0, 9 
+    jal ra,  gpio_read          
 
     #beqz a0, use_released 
     bnez a0, finish_handler  
@@ -170,7 +167,7 @@ use_released:
 
 do_printf:
     la a0, fmt_button        
-    call printf
+call printf
 finish_handler:
     lw ra, 0(sp)             
     addi sp, sp, 4           
@@ -178,18 +175,18 @@ finish_handler:
 
 
 main:
-    # Llamar gpio_input(BUTTON_PIN)
-    li a0, BUTTON_PIN       # primer argumento
-    call gpio_input
+    # Llamar gpio_input(9 )
+    li a0, 9        # primer argumento
+    jal ra,  gpio_input
 
-    # Llamar gpio_output(LED_PIN)
-    li a0, LED_PIN
-    call gpio_output
+    # Llamar gpio_output(2)
+    li a0, 2
+    jal ra,  gpio_output
     # Set irq handler
-    li a0, BUTTON_PIN
+    li a0, 9 
     la a1, button_handler
-    li a2, BUTTON_PIN
-    call gpio_set_irq_handler
+    li a2, 9 
+    jal ra,  gpio_set_irq_handler
 
 
 loop:
