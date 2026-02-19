@@ -1,7 +1,8 @@
+
 CFLAGS ?= -W -Wall -Wextra -Werror -Wundef -Wshadow
 CFLAGS += -Wdouble-promotion -fno-common -Wconversion
 CFLAGS += -march=rv32imc_zicsr -mabi=ilp32 -mcmodel=medany
-CFLAGS += -Os -ffunction-sections -fdata-sections -I.
+CFLAGS += -g -O0 -ffunction-sections -fdata-sections -I.
 LDFLAGS ?= -Lmain  -Tlink.ld -nostdlib -nostartfiles -Wl,--gc-sections $(EXTRA_LINKFLAGS)
 CWD ?= $(realpath $(CURDIR))
 C = $(shell which riscv32-esp-elf-gcc || find /opt/esp/tools -name "riscv32-esp-elf-gcc" | head -n 1)

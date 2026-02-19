@@ -337,6 +337,7 @@ def do_cmd_output(req_data, cmd_array):
         req_data["error"] = result.returncode
 
     return req_data["error"]
+
 # (2) Flasing assembly program into target board
 def do_flash_request(request):
     try:
@@ -380,11 +381,11 @@ def do_flash_request(request):
         
         #Interrupt mode adaptations
         if BUILD_PATH == "./interrupt":
-            error = do_cmd_output(
+            error = do_cmd(
                 req_data, ["make","-C", BUILD_PATH, "build"]
             )
             if error == 0:
-                error = do_cmd_output(
+                error = do_cmd(
                 req_data, ["make","-C", BUILD_PATH, "flash"]
             )
 
@@ -504,6 +505,7 @@ def do_monitor_request(request):
                 req_data, ["make","-C", BUILD_PATH, "monitor"]
             )
             logging.info(f"Building interrupt project, error code: {error}")
+            time.sleep(1)
             if error == 0:
                 req_data["status"] += "Flash completed successfully.\n"
 
@@ -706,8 +708,11 @@ def kill_all_processes(process_name):
 # -------OpenOCD Function
 def start_openocd_thread(req_data):
     target_board = req_data["target_board"]
-    route = "./openocd_scripts/openscript_" + target_board + ".cfg"
-    logging.debug(f"OpenOCD route: {route}")
+    if BUILD_PATH == './interrupt':
+        route = "../openocd_scripts/openscript_" + target_board + "_bare.cfg"
+    else:    
+        route = "../openocd_scripts/openscript_" + target_board + ".cfg"
+    logging.info(f"OpenOCD route: {route}")
     try:
         thread = threading.Thread(
             target=monitor_openocd_output,
@@ -743,6 +748,26 @@ def has_spaces_in_paths(gdbinit_path):
 def start_gdbgui(req_data):
     route = os.path.join(BUILD_PATH, "gdbinit")
     logging.debug(f"GDBinit route: {route}")
+    if BUILD_PATH == "./interrupt":
+        route_script = os.path.join(BUILD_PATH, "gdbscript.gdb") 
+        logging.debug(f"GDB script route for interrupt: {route_script}")
+        logging.info("Starting GDBGUI...")
+        gdb_command = f"riscv32-esp-elf-gdb ./interrupt/firmware.elf -x {route_script}"
+        gdbgui_cmd = ["gdbgui", "-g", gdb_command]
+        # monitor_cmd = ["gnome-terminal", "--", "make", "-C", BUILD_PATH, "monitor"]
+        try:
+            # process_holder["monitor"] = subprocess.Popen(monitor_cmd)
+            process_holder["gdbgui"] = subprocess.run(
+                gdbgui_cmd, stdout=sys.stdout, stderr=sys.stderr, text=True
+            )
+        except Exception as e:
+            logging.error("Failed to start GDBGUI: %s", e)
+            req_data[
+                "status"
+            ] += f"Error starting GDBGUI (code {e.returncode}): {e.stderr}\n"
+            return jsonify(req_data)
+        return jsonify(req_data)
+
     # Cases if its creatino or creator module
     if BUILD_PATH == "./creatino":
         route_script = os.path.join(BUILD_PATH, "gdbscript_creatino.gdb")
@@ -926,7 +951,10 @@ def do_debug_request(request):
         BUILD_PATH = "./creator"
         error = check_build()
         # (1.)Check .elf files in BUILD_PATH
-        route = BUILD_PATH + "/build"
+        if BUILD_PATH == "./interrupt":
+            route = BUILD_PATH
+        else:
+            route = BUILD_PATH + "/build"
         logging.debug(f"Checking for ELF files in {route}")
         if os.path.isdir(route) and os.listdir(route) is False:
             req_data["status"] += "No ELF file found in build directory.\n"
