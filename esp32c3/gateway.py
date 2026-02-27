@@ -1024,10 +1024,10 @@ def get_form():
 def post_flash():
     global arduino
     arduino = bool(request.get_json().get("arduino", False))
-    logging.info(f"Arduino mode: {arduino}")
+    logging.debug(f"Arduino mode: {arduino}")
     global interrupts
     interrupts = bool(request.get_json().get("interrupt", False))
-    logging.info(f"Interrupts mode: {interrupts}")  
+    logging.debug(f"Interrupts mode: {interrupts}")  
     try:
         shutil.rmtree("build")
     except Exception as e:
@@ -1040,12 +1040,24 @@ def post_flash():
 @app.route("/debug", methods=["POST"])
 @cross_origin()
 def post_debug():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")
+    global interrupts
+    interrupts = bool(request.get_json().get("interrupt", False))
+    logging.debug(f"Interrupts mode: {interrupts}")  
     return do_debug_request(request)
 
 
 @app.route("/monitor", methods=["POST"])
 @cross_origin()
 def post_monitor():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")
+    global interrupts
+    interrupts = bool(request.get_json().get("interrupt", False))
+    logging.debug(f"Interrupts mode: {interrupts}")  
     return do_monitor_request(request)
 
 
@@ -1066,6 +1078,12 @@ def post_stop_flash():
 @app.route("/stopmonitor", methods=["POST"])
 @cross_origin()
 def post_stop_monitor():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")
+    global interrupts
+    interrupts = bool(request.get_json().get("interrupt", False))
+    logging.debug(f"Interrupts mode: {interrupts}")  
     return do_stop_monitor_request(request)
 
 
@@ -1073,6 +1091,12 @@ def post_stop_monitor():
 @app.route("/fullclean", methods=["POST"])
 @cross_origin()
 def post_fullclean_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")
+    global interrupts
+    interrupts = bool(request.get_json().get("interrupt", False))
+    logging.debug(f"Interrupts mode: {interrupts}")  
     return do_fullclean_request(request)
 
 
@@ -1080,10 +1104,16 @@ def post_fullclean_flash():
 @app.route("/eraseflash", methods=["POST"])
 @cross_origin()
 def post_erase_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")
+    global interrupts
+    interrupts = bool(request.get_json().get("interrupt", False))
+    logging.debug(f"Interrupts mode: {interrupts}")  
     return do_eraseflash_request(request)
 
 
-# (7) POST /arduinoMode-> cancel
+# (7) POST /arduinoMode TO BE ERARED
 @app.route("/arduinoMode", methods=["POST"])
 @cross_origin()
 def post_arduino_mode():
