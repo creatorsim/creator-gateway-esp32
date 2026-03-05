@@ -228,10 +228,15 @@ def creator_build(file_in, file_out, target_board):
 
             # RGB change
             if len(data) > 0 and data[0] == "li":
-                if len(data) >= 3:
-                    _, reg, val = data
-                    reg = reg.replace(",", "")
-                    regs[reg] = int(val, 0)
+                clean_data = line.split('#')[0].strip().split()
+                
+                if len(clean_data) >= 3:
+                    cmd, reg, val = clean_data[:3]
+                    reg = reg.replace(",", "").strip()
+                    try:
+                        regs[reg] = int(val, 0)
+                    except ValueError:
+                        logging.warning(f"No se pudo convertir valor a entero: {val}")
 
             # Detectar 'jal ra, digitalWrite'
             if len(data) >= 3 and data[0] == "jal" and data[1].replace(",", "") == "ra" and data[2] == "digitalWrite":
@@ -292,26 +297,33 @@ def creator_build(file_in, file_out, target_board):
 
 
 def do_cmd(req_data, cmd_array):
+    result = None
     try:
         # Execute the command normally
         result = subprocess.run(
-            cmd_array, capture_output=False, timeout=120, check=True
+            cmd_array, capture_output=False, timeout=300
         )
     except Exception as e:
         pass
 
-    if result.stdout != None:
-        req_data["status"] += result.stdout.decode("utf-8") + "\n"
-    if result.returncode != None:
-        req_data["error"] = result.returncode
+    try:        # If the command fails, try to execute it with 'sudo'  
+        if result.stdout != None:
+            req_data["status"] += result.stdout.decode("utf-8") + "\n"
+        if result.returncode != None:
+            req_data["error"] = result.returncode
+            return req_data["error"]
+    except Exception as e:
+        logging.error(f"Error executing command: {e}")
+        pass        
 
     return req_data["error"]
 
 
 def do_cmd_output(req_data, cmd_array):
+    result = None
     try:
         result = subprocess.run(
-            cmd_array, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=120
+            cmd_array, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=300
         )
     except:
         pass
@@ -361,7 +373,7 @@ def do_flash_request(request):
             logging.info("cr_ functions are not supported in this mode.")
             raise Exception("cr_ functions are not supported in this mode.")
         elif error != 0:
-            raise Exception
+            raise Exception("Error adapting assembly file...")
 
         if error == 0 and BUILD_PATH == "./creator":
             error = do_cmd(req_data, ["idf.py", "-C", BUILD_PATH, "fullclean"])
