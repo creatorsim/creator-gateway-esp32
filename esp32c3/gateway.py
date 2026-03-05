@@ -284,7 +284,7 @@ def do_cmd(req_data, cmd_array):
     try:
         # Execute the command normally
         result = subprocess.run(
-            cmd_array, capture_output=False, timeout=120, check=True
+            cmd_array, capture_output=False, timeout=120
         )
     except Exception as e:
         pass
