@@ -281,10 +281,12 @@ def creator_build(file_in, file_out):
         return -1
 
 def do_cmd(req_data, cmd_array):
+    result = None
+    
     try:
         # Execute the command normally
         result = subprocess.run(
-            cmd_array, capture_output=False, timeout=120
+            cmd_array, capture_output=False, timeout=300
         )
     except Exception as e:
         pass
@@ -300,7 +302,7 @@ def do_cmd(req_data, cmd_array):
 def do_cmd_output(req_data, cmd_array):
     try:
         result = subprocess.run(
-            cmd_array, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=120
+            cmd_array, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=300
         )
     except:
         pass
