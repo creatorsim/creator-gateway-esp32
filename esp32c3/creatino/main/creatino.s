@@ -1495,8 +1495,37 @@ cr_serial_readBytesUntil:
 .extern serial_write   
 cr_serial_write:
     addi sp, sp, -4      
-    sw ra, 0(sp)     # Guardar el valor de ra (return address)
+    sw ra, 0(sp)     
     jal ra,serial_write 
-    lw ra, 0(sp)     # Recupera el valor de ra
+    lw ra, 0(sp)     
     addi sp, sp, 4
-    jr ra              
+    jr ra 
+
+.globl cr_rgbLedWrite
+.extern rgbLedWrite
+
+cr_rgbLedWrite:
+    addi sp, sp, -32       
+    
+    sw ra, 28(sp)          
+    sw t0, 0(sp)
+    sw t1, 4(sp)
+    sw t2, 8(sp)
+    sw t3, 12(sp)
+    sw t4, 16(sp)
+    sw t5, 20(sp)
+    sw t6, 24(sp)
+
+    jal rgbLedWrite
+
+    lw t0, 0(sp)
+    lw t1, 4(sp)
+    lw t2, 8(sp)
+    lw t3, 12(sp)
+    lw t4, 16(sp)
+    lw t5, 20(sp)
+    lw t6, 24(sp)
+    lw ra, 28(sp)
+
+    addi sp, sp, 32
+    ret

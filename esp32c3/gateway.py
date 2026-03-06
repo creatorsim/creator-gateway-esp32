@@ -113,6 +113,7 @@ creatino_functions = [
     "pulseIn",
     "pulseInLong",
     "pulseOut",
+    "rgbLedWrite"
 ]
 
 process_holder = {}
@@ -195,21 +196,6 @@ def do_get_form(request):
     except Exception as e:
         return str(e)
 
-
-# **Arduino mode checkbox handling**
-def do_arduino_mode(request):
-    req_data = request.get_json()
-
-    statusChecker = req_data.get("state", "")
-    logging.debug(f"Checkbox value received: {statusChecker} of type {type(statusChecker)}") 
-
-    global arduino
-    arduino = bool(statusChecker)
-
-    logging.debug(f"Estado checkbox: {arduino} de tipo {type(statusChecker)}")
-    return req_data
-
-
 def check_build():
     global BUILD_PATH
     try:
@@ -223,22 +209,51 @@ def check_build():
         return -1
 
 
-def creator_build(file_in, file_out):
+def creator_build(file_in, file_out, target_board):
     try:
         # open input + output files
         fin = open(file_in, "rt")
         fout = open(file_out, "wt")
+        regs = {}
 
         # write header
         fout.write(".text\n")
         fout.write(".type main, @function\n")
         fout.write(".globl main\n")
 
-        data = []
         # for each line in the input file...
         for line in fin:
             line = add_space_after_comma(line)
             data = line.strip().split()
+
+            # RGB change
+            if len(data) > 0 and data[0] == "li":
+                clean_data = line.split('#')[0].strip().split()
+                
+                if len(clean_data) >= 3:
+                    cmd, reg, val = clean_data[:3]
+                    reg = reg.replace(",", "").strip()
+                    try:
+                        regs[reg] = int(val, 0)
+                    except ValueError:
+                        logging.warning(f"No se pudo convertir valor a entero: {val}")
+
+            # Detectar 'jal ra, digitalWrite'
+            if len(data) >= 3 and data[0] == "jal" and data[1].replace(",", "") == "ra" and data[2] == "digitalWrite":
+                logging.info("Detected digitalWrite call with a0=%s, a1=%s", regs.get("a0"), regs.get("a1"))
+                print("DEBUG:", regs)
+                if target_board in ["esp32c6", "esp32h2"] and regs.get("a0") == 8:
+                    if regs.get("a1") == 1:
+                        fout.write("    li a1, 50\n")
+                        fout.write("    li a2, 50\n")
+                        fout.write("    li a3, 50\n")
+                    else:
+                        fout.write("    li a1, 0\n")
+                        fout.write("    li a2, 0\n")
+                        fout.write("    li a3, 0\n")    
+                    fout.write("    jal ra, cr_rgbLedWrite\n")
+                    continue  # Salto para no escribir la línea original
+
             # Creatino replace functions
             if len(data) >= 3 and data[0] == "jal":
                 ra_token = data[1].replace(",", "").strip()
@@ -277,12 +292,12 @@ def creator_build(file_in, file_out):
         logging.error("Error: cr_ functions are not supported in this mode.")
         return 2
     except Exception as e:
-        logging.error("Error adapting assembly file: ", str(e))
+        logging.error("Error adapting assembly file: %s", str(e))
         return -1
+
 
 def do_cmd(req_data, cmd_array):
     result = None
-    
     try:
         # Execute the command normally
         result = subprocess.run(
@@ -291,15 +306,21 @@ def do_cmd(req_data, cmd_array):
     except Exception as e:
         pass
 
-    if result.stdout != None:
-        req_data["status"] += result.stdout.decode("utf-8") + "\n"
-    if result.returncode != None:
-        req_data["error"] = result.returncode
+    try:        # If the command fails, try to execute it with 'sudo'  
+        if result.stdout != None:
+            req_data["status"] += result.stdout.decode("utf-8") + "\n"
+        if result.returncode != None:
+            req_data["error"] = result.returncode
+            return req_data["error"]
+    except Exception as e:
+        logging.error(f"Error executing command: {e}")
+        pass        
 
     return req_data["error"]
 
 
 def do_cmd_output(req_data, cmd_array):
+    result = None
     try:
         result = subprocess.run(
             cmd_array, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=300
@@ -347,12 +368,12 @@ def do_flash_request(request):
         # transform th temporal assembly file
         filename = BUILD_PATH + "/main/program.s"
         logging.debug("filename to transform in do_flash_request: ", filename)
-        error = creator_build("tmp_assembly.s", filename)
+        error = creator_build("tmp_assembly.s", filename, target_board)
         if error == 2:
             logging.info("cr_ functions are not supported in this mode.")
             raise Exception("cr_ functions are not supported in this mode.")
         elif error != 0:
-            raise Exception
+            raise Exception("Error adapting assembly file...")
 
         if error == 0 and BUILD_PATH == "./creator":
             error = do_cmd(req_data, ["idf.py", "-C", BUILD_PATH, "fullclean"])
@@ -507,7 +528,7 @@ def do_job_request(request):
         # transform th temporal assembly file
         filename = BUILD_PATH + "/main/program.s"
         print("filename to transform in do_job_request: ", filename)
-        error = creator_build("tmp_assembly.s", filename)
+        error = creator_build("tmp_assembly.s", filename, target_board)
         if error != 0:
             raise Exception("Error adapting assembly file...")
 
@@ -944,11 +965,13 @@ def get_form():
 @app.route("/flash", methods=["POST"])
 @cross_origin()
 def post_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
+    logging.debug(f"Arduino mode: {arduino}")  
     try:
         shutil.rmtree("build")
     except Exception as e:
         pass
-
     return do_flash_request(request)
 
 
@@ -956,12 +979,16 @@ def post_flash():
 @app.route("/debug", methods=["POST"])
 @cross_origin()
 def post_debug():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_debug_request(request)
 
 
 @app.route("/monitor", methods=["POST"])
 @cross_origin()
 def post_monitor():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_monitor_request(request)
 
 
@@ -969,6 +996,8 @@ def post_monitor():
 @app.route("/job", methods=["POST"])
 @cross_origin()
 def post_job():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_job_request(request)
 
 
@@ -976,12 +1005,16 @@ def post_job():
 @app.route("/stop", methods=["POST"])
 @cross_origin()
 def post_stop_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_stop_flash_request(request)
 
 
 @app.route("/stopmonitor", methods=["POST"])
 @cross_origin()
 def post_stop_monitor():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_stop_monitor_request(request)
 
 
@@ -989,6 +1022,8 @@ def post_stop_monitor():
 @app.route("/fullclean", methods=["POST"])
 @cross_origin()
 def post_fullclean_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_fullclean_request(request)
 
 
@@ -997,13 +1032,6 @@ def post_fullclean_flash():
 @cross_origin()
 def post_erase_flash():
     return do_eraseflash_request(request)
-
-
-# (7) POST /arduinoMode-> cancel
-@app.route("/arduinoMode", methods=["POST"])
-@cross_origin()
-def post_arduino_mode():
-    return do_arduino_mode(request)
 
 
 # signal.signal(signal.SIGINT, handle_exit)
