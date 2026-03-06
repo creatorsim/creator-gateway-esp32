@@ -242,7 +242,7 @@ def creator_build(file_in, file_out, target_board):
             if len(data) >= 3 and data[0] == "jal" and data[1].replace(",", "") == "ra" and data[2] == "digitalWrite":
                 logging.info("Detected digitalWrite call with a0=%s, a1=%s", regs.get("a0"), regs.get("a1"))
                 print("DEBUG:", regs)
-                if target_board == "esp32c6" or target_board == "esp32h2" and regs.get("a0") == 8:
+                if target_board in ["esp32c6", "esp32h2"] and regs.get("a0") == 8:
                     if regs.get("a1") == 1:
                         fout.write("    li a1, 50\n")
                         fout.write("    li a2, 50\n")
@@ -979,12 +979,16 @@ def post_flash():
 @app.route("/debug", methods=["POST"])
 @cross_origin()
 def post_debug():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_debug_request(request)
 
 
 @app.route("/monitor", methods=["POST"])
 @cross_origin()
 def post_monitor():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_monitor_request(request)
 
 
@@ -992,6 +996,8 @@ def post_monitor():
 @app.route("/job", methods=["POST"])
 @cross_origin()
 def post_job():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_job_request(request)
 
 
@@ -999,12 +1005,16 @@ def post_job():
 @app.route("/stop", methods=["POST"])
 @cross_origin()
 def post_stop_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_stop_flash_request(request)
 
 
 @app.route("/stopmonitor", methods=["POST"])
 @cross_origin()
 def post_stop_monitor():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_stop_monitor_request(request)
 
 
@@ -1012,6 +1022,8 @@ def post_stop_monitor():
 @app.route("/fullclean", methods=["POST"])
 @cross_origin()
 def post_fullclean_flash():
+    global arduino
+    arduino = bool(request.get_json().get("arduino", False))
     return do_fullclean_request(request)
 
 
