@@ -1495,9 +1495,9 @@ cr_serial_readBytesUntil:
 .extern serial_write   
 cr_serial_write:
     addi sp, sp, -4      
-    sw ra, 0(sp)     # Guardar el valor de ra (return address)
+    sw ra, 0(sp)     
     jal ra,serial_write 
-    lw ra, 0(sp)     # Recupera el valor de ra
+    lw ra, 0(sp)     
     addi sp, sp, 4
     jr ra 
 
@@ -1505,9 +1505,9 @@ cr_serial_write:
 .extern rgbLedWrite
 
 cr_rgbLedWrite:
-    addi sp, sp, -32       # Reservar stack (alineado)
+    addi sp, sp, -32       
     
-    sw ra, 28(sp)          # Guardar return address
+    sw ra, 28(sp)          
     sw t0, 0(sp)
     sw t1, 4(sp)
     sw t2, 8(sp)
@@ -1516,7 +1516,6 @@ cr_rgbLedWrite:
     sw t5, 20(sp)
     sw t6, 24(sp)
 
-    # a0, a1, a2 ya contienen los argumentos
     jal rgbLedWrite
 
     lw t0, 0(sp)
