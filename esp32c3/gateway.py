@@ -185,6 +185,8 @@ def do_stop_monitor_request(request):
         req_data["status"] = ""
         logging.debug("Killing Monitor")
         if BUILD_PATH == "./interrupt":
+            error = kill_all_processes('gdbgui')
+            error = kill_all_processes('openocd')
             error = kill_all_processes('esputil')
         else:    
             error = kill_all_processes("idf.py")
