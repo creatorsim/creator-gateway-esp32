@@ -167,6 +167,10 @@ def do_eraseflash_request(request):
         BUILD_PATH = "./creator"
         error = check_build()
         # flashing steps...
+        if BUILD_PATH == "./interrupt":
+            error = do_cmd_output(req_data, ['esptool.py','--port', target_device,'erase_flash'])
+            req_data['status'] += 'Erase flash done.\n'
+            return jsonify(req_data)
 
         if error == 0:
             error = do_cmd_output(req_data, ['idf.py','-C', BUILD_PATH,'-p',target_device,'erase-flash'])

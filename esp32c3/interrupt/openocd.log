@@ -1,0 +1,514 @@
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+shutdown command invoked
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4004C912, debug_reason=00000000
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Error on socket 'GDB': errno==104, message: Connection reset by peer.
+Info : dropped 'gdb' connection
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x400462DC, debug_reason=00000000
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Error on socket 'GDB': errno==104, message: Connection reset by peer.
+Info : dropped 'gdb' connection
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : [esp32c3] Target halted, PC=0x4038057E, debug_reason=00000004
+Info : [esp32c3] Target halted, PC=0x40380582, debug_reason=00000004
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x403804A2, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x403804A2, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380532, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x40380450, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x40380450, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000008
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000008
+Warn : No symbols for FreeRTOS!
+undefined debug reason 8 (UNDEFINED) - target needs reset
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x40380450, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x40380450, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057E, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380582, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x403804DC, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038043C, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Info : dropped 'gdb' connection
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x40380586, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057E, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380582, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x403804DC, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x403804DE, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x403804E0, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x403804E2, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x400462E0, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x400462E0, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Error on socket 'GDB': errno==104, message: Connection reset by peer.
+Info : dropped 'gdb' connection
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000008
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000008
+Warn : No symbols for FreeRTOS!
+undefined debug reason 8 (UNDEFINED) - target needs reset
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057E, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x40380582, debug_reason=00000004
+Error: Don't have the number of threads in FreeRTOS!
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x40380450, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x40380450, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Error: esp_usb_jtag: could not find or open device!
+/home/elisa/.espressif/tools/openocd-esp32/v0.12.0-esp32-20241016/openocd-esp32/share/openocd/scripts/target/esp_common.cfg:9: Error:
+at file "/home/elisa/.espressif/tools/openocd-esp32/v0.12.0-esp32-20241016/openocd-esp32/share/openocd/scripts/target/esp_common.cfg", line 9
+Error: [esp32c3] Unsupported DTM version: -1
+Error: [esp32c3] Could not identify target type.
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x400462DC, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x400462DC, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Error on socket 'GDB': errno==104, message: Connection reset by peer.
+Info : dropped 'gdb' connection
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection
+Open On-Chip Debugger v0.12.0-esp32-20241016 (2024-10-16-14:17)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : only one transport option; autoselecting 'jtag'
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+DEPRECATED! use 'gdb memory_map', not 'gdb_memory_map'
+Info : esp_usb_jtag: serial (58:CF:79:16:81:90)
+Info : esp_usb_jtag: Device found. Base speed 40000KHz, div range 1 to 255
+Info : clock speed 40000 kHz
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] datacount=2 progbufsize=16
+Info : [esp32c3] Examined RISC-V core; found 1 harts
+Info : [esp32c3]  XLEN=32, misa=0x40101104
+Info : [esp32c3] Examination succeed
+Info : [esp32c3] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+Info : [esp32c3] Target halted, PC=0x400462DC, debug_reason=00000000
+adapter speed: 4000 kHz
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x400462DC, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Info : [esp32c3] Found 8 triggers
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Error on socket 'GDB': errno==104, message: Connection reset by peer.
+Info : dropped 'gdb' connection
+Info : accepting 'gdb' connection on tcp/3333
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Error: Don't have the number of threads in FreeRTOS!
+Warn : RTOS FreeRTOS not detected. (GDB could not find symbol 'pxReadyTasksLists')
+Info : JTAG tap: esp32c3.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+Info : [esp32c3] Reset cause (3) - (Software core reset)
+Error: Don't have the number of threads in FreeRTOS!
+Info : [esp32c3] Target halted, PC=0x4038057C, debug_reason=00000001
+Info : dropped 'gdb' connection

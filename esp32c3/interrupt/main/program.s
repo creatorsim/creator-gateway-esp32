@@ -7,37 +7,62 @@
 .extern gpio_input
 .extern gpio_output
 .extern gpio_read
-    ### MAIN PROGRAM ###
-.data
-fmt_button:
-    .string "Button %s\n"
-pressed_msg:
-    .string "pressed"
-released_msg:
-    .string "released" 
-allocated:
-    .word 0              # variable static uint32_t allocated    
+#
+# Creator (https://creatorsim.github.io/creator/)
+# ESP32C3 Timer Interrupt Example
+#
 
-allocated_msg:
-    .string  "Allocated CPU IRQ %d, prio %u\n"    
+.data
+systimer_tick:
+    .word 0
+allocated:
+    .word 0  
+msg_tick:
+    .string "Hi!!! \n"
+msg_dev:
+    .string "Here\n"     
+
 
 .text
+##---ISR---
 
+
+systimer_clear_interrupt:
+   li t0, SYSTIMER_BASE
+   addi t0, t0, 0x06C # 
+   lw t1, 0(t0)
+   li t2, 7
+   sw t2, 0(t0)  
+   jr ra 
+
+
+print_function:
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    la a0, msg_tick
+call printf
+    li t0, 0                # t0 = 0
+    la t1, systimer_tick    # t1 = &systimer_tick
+    sw t0, 0(t1)            # systimer_tick = 0
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    jr ra
+
+log_task:
+    la t1, systimer_tick
+    lw t0, 0(t1)
+    li t1, 1000 #1 s
+    bge t0, t1, print_function
+    j log_task
+
+timer_handler:
+    la t0, systimer_tick
+    lw t1, 0(t0)
+    addi t1, t1, 1
+    sw t1, 0(t0)
+    jr ra
 
 #---Interrupts
-gpio_clear_interrupt:
-    # a0 = pin
-    li t0, GPIO_BASE
-    addi t0, t0, 0x44
-    lw t1, 0(t0)
-    li t2, 1
-    sll t2, t2, a0   # BIT(pin)
-    not t0, t0      # ~BIT(pin)
-    and t1, t1, t0  #t1 & ~(1 << pin) Clear pin
-    sw t1, 0(t0)
-    ret
-
-
 cpu_alloc_interrupt:
     #Save all save registers, just in case
     addi sp, sp, -12
@@ -51,23 +76,23 @@ cpu_alloc_interrupt:
     la t0, allocated     # t0 = &allocated
     lw t1, 0(t0)         # t1 = allocated
     #Start loop conditions
-    li t2, 1             # t2 = 1, usaremos como BIT(1)
-    li t3, 1             # t3 = no = 1 (inicio del bucle)
+    li t2, 1             # t2 = BIT(1)
+    li t3, 1             # t3 = no = 1 
 loop_bits:
     li t5, 31
-    bge t3, t5, no_free # si no >= 31, todas las interrupciones están cogidas
+    bge t3, t5, no_free # no >= 31, all interrupts are allocated
 
     sll t4, t2, t3      # t4 = 1 << t3
     and t5, t1, t4      # t5 = allocated & (1 << t3)
-    bne t5, zero, next  # si está usado, ir al siguiente
+    bne t5, zero, next  
 
-    # si no está usado, marcarlo
+    # mark bit as allocated
     or t1, t1, t4       # allocated |= (1 << t3)
     sw t1, 0(t0)
 
     # (1) Enable CPU interruptions REG(C3_INTERRUPT)[0x104 / 4] |= BIT(no); 
     li t5, INTERRUPT_BASE
-    addi t5, t5, 0x104
+    addi t5, t5, 0x104 # INTERRUPT_CORE0_CPU_INT_ENABLE_REG
     lw t0, 0(t5)
     li t1, 1
     sll t1, t1, t3 #BIT(no)
@@ -76,20 +101,13 @@ loop_bits:
 
     # (2) Assign priority REG(C3_INTERRUPT)[0x118 / 4 + no - 1] = prio;  // CPU_INT_PRI_N
     li t5, INTERRUPT_BASE
-    addi t5, t5, 0x118
+    addi t5, t5, 0x118 #INTERRUPT_CORE0_CPU_INT_PRI_n_REG  
     addi t1, t3, -1
     slli t1, t1, 2
     add t5, t5, t1
     sw s0, 0(t5)
 
-    # #(3) Print if it's allocated
-    # la a0, allocated_msg
-    # mv a1, t3
-    # mv a2, s0
-
-    # jal ra,  printf
-
-    mv a0, t3            # devolver número asignado
+    mv a0, t3            # return no
     j done
 
 next:
@@ -97,97 +115,79 @@ next:
     j loop_bits
 
 no_free:
-    li a0, -1             # ningún bit libre
+    li a0, -1             
 
 done:
-    # Restaurar registros
+    # Restore all save registers
     lw s0, 0(sp)
     lw s1, 4(sp)
     lw s2, 8(sp)
     addi sp, sp, 12
     ret
 
-gpio_set_irq_handler:
-    # a0 = pin, a1 = handler, a2 = arg
-    #Move args into saved registers
-    mv s0, a0  # pin
-    mv s1, a1  # handler
-    mv s2, a2  # arg
-
-    # (1)Allocate interrupt in CPU with priority 1
+systimer_init:
+    # Arguments: a0 = period
+    mv s0, a0 
+    # (1) Configure timer
+    addi sp, sp, -4      
+    sw ra, 0(sp)         
+    # SYSTIMER->TARGET0_CONF = BIT(30) | 16000; Set period
+    li t0, SYSTIMER_BASE
+    addi t0, t0, 0x034 #SYSTIMER_TARGET0_CONF_REG
+    li t1, 1
+    slli t1, t1, 30 #Bit(30)
+    or t1, t1, s0  # t1 = BIT(30) | 16000
+    sw t1, 0(t0)
+    # SYSTIMER->COMP0_LOAD = BIT(0); Reload period
+    li t0, SYSTIMER_BASE
+    addi t0, t0, 0x050
+    li t1, 1
+    slli t1, t1, 0 # t1 = BIT(0)
+    sw t1, 0(t0)
+    # SYSTIMER->CONF |= BIT(24);                 
+    li t0, SYSTIMER_BASE
+    addi t0, t0, 0x000  #SYSTIMER_CONF_REG
+    lw t1, 0(t0)
+    li t2, 1
+    slli t3, t2, 24  # t3 = BIT(24)
+    or t1, t1, t3  # BIT(24) | 0
+    sw t1, 0(t0)
+    # SYSTIMER->INT_ENA |= 7U enable triggers in all targets
+    li t0, SYSTIMER_BASE
+    addi t0, t0, 0x064 # t0 = SYSTIMER_INT_ENA_REG
+    lw t1, 0(t0)
+    li t2, 7 # 7 (111) activate all targets
+    or t1, t1, t2 # SYSTIMER->INT_ENA |= 7U;
+    sw t1, 0(t0)
+    # (2)Allocate interrupt in CPU with priority 1
     li a0, 1          # prioridad
-    jal ra,  cpu_alloc_interrupt
-    mv s3, a0         # guardar IRQ asignado en s3 (no)
-
-    # (2)Save pin interrupt
+    jal ra, cpu_alloc_interrupt
+    mv s1, a0         # Save IRQ assigned
+    # (3) Save ISR in g_irq_data
     la t0, g_irq_data
-    slli t1, s3, 4    # t1 = no * 16
-    add t0, t0, t1    # t0 = &g_irq_data[no]
-
-    sw s1, 0(t0)     # *(t0 + 0) = handler (a1)
-    sw s2, 4(t0)     # *(t0 + 4) = arg (a2)
-    la t2, gpio_clear_interrupt # t2 = gpio_clear_interrupt
-    sw t2, 8(t0)     # *(t0 + 8) = gpio_clear_interrupt
-    sw s0, 12(t0)    # *(t0 + 12) = pin (s0)
-
-    # (3) Set characteristics for the interrupt = REG(C3_GPIO)[0x74 / 4 + pin] |= (3U << 7) | BIT(13); 
-    li t0, GPIO_BASE
-    addi t0, t0, 0x74
-    slli t1, s0, 2 #t1 = pin * 4
-    add t0, t0, t1 #t0 = &REG(C3_GPIO)[0x74 / 4 + pin]
-    lw t2, 0(t0)
-    # li t3, 0x2180 # t3 = (3U << 7) | BIT(13)
-    li t3, 3         # t3 = 3
-    slli t3, t3, 7   # t3 = 3 << 7 = 0x180
-    li t4, 1         # t4 = 1
-    slli t4, t4, 13  # t4 = 1 << 13 = 0x2000
-    or t3, t3, t4    # t3 = t3 | t4 = 0x180 | 0x2000 = 0x2180
-    or t2, t2, t3 #valor REG(C3_GPIO)[0x74 / 4 + pin] |= t3
+    slli t1, s1, 4 # t1 = no * 16 (4 fields x 4 bytes)
+    add t0, t0, t1
+    la t2, timer_handler
     sw t2, 0(t0)
-    # (4) Map GPIO IRQ to CPU
+    la t2, systimer_clear_interrupt
+    sw t2, 8(t0)
+    # (4) Map systimer IRQ to CPU
     li t0, INTERRUPT_BASE
-    addi t0, t0, 0x40 #GPIO_INTERRUPT_PRO_MAP_REG
-    sw s3, 0(t0)
-    ret
-##---ISR and main part---
-button_handler:
-    addi sp, sp, -4         
-    sw ra, 0(sp)            
+    addi t0, t0, 0x94
+    lw t1, 0(t0)
+    mv t2, s1 #no
+    sw t2, 0(t0)
 
-    li a0, 9 
-    jal ra,  gpio_read          
+    lw ra, 0(sp)         
+    addi sp, sp, 4       
 
-    #beqz a0, use_released 
-    bnez a0, finish_handler  
-    la a1, pressed_msg
-    j do_printf             
-
-use_released:
-    la a1, released_msg
-
-do_printf:
-    la a0, fmt_button        
-call printf
-finish_handler:
-    lw ra, 0(sp)             
-    addi sp, sp, 4           
-    ret        
+    jr ra
 
 
-main:
-    # Llamar gpio_input(9 )
-    li a0, 9        # primer argumento
-    jal ra,  gpio_input
-
-    # Llamar gpio_output(2)
-    li a0, 2
-    jal ra,  gpio_output
-    # Set irq handler
-    li a0, 9 
-    la a1, button_handler
-    li a2, 9 
-    jal ra,  gpio_set_irq_handler
-
+main: 
+    li a0, 16000
+    jal ra, systimer_init
+    j log_task
 
 loop:
     j loop
