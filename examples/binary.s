@@ -141,7 +141,7 @@ setup:
     #Expected result: 52
     
     # High Byte
-    li a0, 0x1234  # NÃºmero de 16 bits (4660 en decimal)
+    li a0, 0x1234  #  16 bits number (4660 in decimal)
     addi sp, sp, -4       
     sw ra, 0(sp) 
     jal ra, highByte 

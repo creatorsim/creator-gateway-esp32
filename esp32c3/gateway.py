@@ -677,7 +677,7 @@ def kill_all_processes(process_name):
 # -------OpenOCD Function
 def start_openocd_thread(req_data):
     target_board = req_data["target_board"]
-    route = "./openocd_scripts/openscript_" + target_board + ".cfg"
+    route = "../openocd_scripts/openscript_" + target_board + ".cfg"
     logging.debug(f"OpenOCD route: {route}")
     try:
         thread = threading.Thread(

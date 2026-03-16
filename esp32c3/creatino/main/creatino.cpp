@@ -162,13 +162,16 @@ extern "C" char* ecall_read(int option, char *buffer, int size) {
 
 extern "C" void serial_begin(int baudrate) {
     Serial.begin(baudrate);
+    vTaskDelay(1);
 }
 extern "C" void serial_end() { 
-    Serial.end();   
+    Serial.end();
+    vTaskDelay(1);   
 }
 
 extern "C" void serial_flush() {
     Serial.flush();
+    vTaskDelay(1);
 }
 
 extern "C" bool serial_find(const char *target) {
